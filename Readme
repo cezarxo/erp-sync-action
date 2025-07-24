@@ -1,2 +1,7 @@
 This is a reusable GitHub Actions workflow for synchronizing ERP modules.
 It is designed to be used in various repositories to ensure that ERP modules are kept up-to-date and consistent across different environments.
+You can include this workflow in your repository by referencing it in your GitHub Actions configuration files. The workflow will handle the synchronization process automatically, making it easier to manage ERP modules without manual intervention.
+
+From the GitHub Docs:
+
+        “You can reuse workflows in private repositories only if the caller repository is within the same enterprise and the reusable workflow repository is in the same organization and set to public.”
