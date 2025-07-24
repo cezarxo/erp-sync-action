@@ -1,4 +1,4 @@
-name: Reusable ERP Sync
+name: ERP Sync
 
 on:
   workflow_call:
@@ -30,11 +30,9 @@ jobs:
           installation_id: ${{ secrets.APP_INSTALLATION_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: Clone monorepo
+      - name: Clone monorepo (develop branch)
         run: |
-          git clone https://x-access-token:${{ steps.generate_token.outputs.token }}@github.com/cezarxo/erp-main.git temp-main
-          cd temp-main
-          git switch -c sync/${{ inputs.module_name }}/${{ github.run_number }}
+          git clone --branch develop https://x-access-token:${{ steps.generate_token.outputs.token }}@github.com/cezarxo/erp-main.git temp-main
 
       - name: Sync module into monorepo
         run: |
@@ -42,11 +40,10 @@ jobs:
           mkdir -p temp-main/Modules/${{ inputs.module_name }}
           rsync -av --exclude=temp-main --exclude=.git ./ temp-main/Modules/${{ inputs.module_name }}
 
-      - name: Commit and push to monorepo
+      - name: Commit and push to monorepo develop
         run: |
           cd temp-main
           git config user.name "ERP Sync Bot"
           git config user.email "bot@erp.com"
           git add Modules/${{ inputs.module_name }}
-          git commit -m "🔁 Sync ${{ inputs.module_name }} module"
-          git push origin sync/${{ inputs.module_name }}/${{ github.run_number }}
+          git diff --cached --quiet && echo "✅ No changes to commit" || (git commit -m "🔁 Sync ${{ inputs.module_name }} module" && git push origin develop)
